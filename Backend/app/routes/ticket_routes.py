@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models.ticket import Ticket # Importamos el modelo que hicimos
+from app.models.ticket import Ticket 
 
 tickets_bp = Blueprint('tickets', __name__)
 

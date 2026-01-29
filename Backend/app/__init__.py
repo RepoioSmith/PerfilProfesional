@@ -6,25 +6,29 @@ from flask_jwt_extended import JWTManager
 import os
 from dotenv import load_dotenv
 
-mongo=PyMongo()
+mongo = PyMongo()
 jwt = JWTManager()
 bcrypt = Bcrypt()
 
-def create_apo():
+def create_app():
     app = Flask(__name__)
     load_dotenv()
     
-    #configuracion
-    app.config['MONGO_URI'] = os.gotenv('JWT_SECRET_KEY', 'super-secret-key')
+    # Configuración correcta
+    app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/perfil_db')
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret-key')
     
-    #iniciamos extensiones en la aplicacion
+    # Inicializar extensiones
     mongo.init_app(app)
     CORS(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
     
-    #importamos y registramos las rutas
+    # Importar y registrar rutas
     from app.routes.auth_routes import auth_bp
+    from app.routes.ticket_routes import tickets_bp
+    
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(tickets_bp, url_prefix='/api/tickets')
     
     return app
