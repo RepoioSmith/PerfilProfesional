@@ -20,7 +20,7 @@ def create_app():
     
     # Inicializar extensiones
     mongo.init_app(app)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}})
     jwt.init_app(app)
     bcrypt.init_app(app)
     

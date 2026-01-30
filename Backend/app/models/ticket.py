@@ -11,8 +11,9 @@ class Ticket:
         self.priority = priority
         self.created_at = datetime.utcnow()
 
-    # MÉTODOS MOVIDOS AFUERA DEL __INIT__
-    def create(self):
+    # --- MÉTODOS CORREGIDOS (Renombrados a Español para coincidir con las rutas) ---
+
+    def crear(self):  # Antes se llamaba 'create'
         ticket_json = {
             'title': self.titulo,
             'description': self.descripcion,
@@ -24,15 +25,15 @@ class Ticket:
         return mongo.db.tickets.insert_one(ticket_json)
     
     @staticmethod
-    def get_all_tickets():
+    def obtener_todos():  # Antes se llamaba 'get_all_tickets'
         return list(mongo.db.tickets.find())
     
     @staticmethod
-    def filter(filter_dict):
+    def filtrar(filter_dict):  # Antes se llamaba 'filter'
         return list(mongo.db.tickets.find(filter_dict))
     
     @staticmethod
-    def get_my_tickets(user_email):
+    def obtener_mis_tickets(user_email):  # Antes se llamaba 'get_my_tickets'
         return list(mongo.db.tickets.find({'made_by': user_email}))
         
     @staticmethod
