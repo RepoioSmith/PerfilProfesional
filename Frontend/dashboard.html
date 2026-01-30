@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1"><i class="fa-solid fa-gauge me-2"></i>Dashboard Interno</span>
+            <button class="btn btn-outline-light btn-sm" onclick="logout()">
+                <i class="fa-solid fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Gestión de Tickets y Mensajes</h2>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 text-primary">Tickets Recientes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="ticketsList" class="list-group list-group-flush">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2 text-muted">Cargando datos...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0 text-success">Crear Ticket Manual</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="createTicketForm">
+                            <div class="mb-3">
+                                <label class="form-label">Título</label>
+                                <input type="text" class="form-control" id="ticketTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="ticketDesc" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Prioridad</label>
+                                <select class="form-select" id="ticketPriority">
+                                    <option value="media">Media</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="baja">Baja</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Guardar Ticket</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lógica embebida para el Dashboard
+        const API_URL = 'http://127.0.0.1:5000/api/tickets';
+        const token = localStorage.getItem('token');
+
+        // 1. Verificar Seguridad (Si no hay token, fuera)
+        if (!token) {
+            window.location.href = 'index.html';
+        }
+
+        // 2. Cargar Tickets al iniciar
+        async function cargarTickets() {
+            try {
+                const res = await fetch(API_URL + '/', {
+                    headers: { 'Authorization': `Bearer ${token}` } // Enviamos el JWT (si implementamos seguridad)
+                });
+                const tickets = await res.json();
+                
+                const contenedor = document.getElementById('ticketsList');
+                contenedor.innerHTML = ''; // Limpiar spinner
+
+                if (tickets.length === 0) {
+                    contenedor.innerHTML = '<p class="text-center text-muted">No hay tickets registrados.</p>';
+                    return;
+                }
+
+                tickets.forEach(ticket => {
+                    const html = `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1 fw-bold">${ticket.title || ticket.titulo}</h6>
+                                <small class="text-muted">${ticket.created_at || 'Reciente'}</small>
+                            </div>
+                            <p class="mb-1 text-secondary small">${ticket.description || ticket.descripcion}</p>
+                            <span class="badge bg-${ticket.prioridad === 'alta' ? 'danger' : 'info'}">${ticket.priority || ticket.prioridad || 'normal'}</span>
+                            <small class="text-muted ms-2">Por: ${ticket.made_by || ticket.creado_por}</small>
+                        </div>
+                    `;
+                    contenedor.innerHTML += html;
+                });
+
+            } catch (error) {
+                console.error(error);
+                alert("Error cargando tickets");
+            }
+        }
+
+        // 3. Crear Ticket
+        document.getElementById('createTicketForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const titulo = document.getElementById('ticketTitle').value;
+            const descripcion = document.getElementById('ticketDesc').value;
+            const prioridad = document.getElementById('ticketPriority').value;
+            const creado_por = localStorage.getItem('userEmail');
+
+            await fetch(API_URL + '/crear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ titulo, descripcion, creado_por, prioridad })
+            });
+
+            // Limpiar y recargar
+            e.target.reset();
+            cargarTickets();
+        });
+
+        // 4. Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'index.html';
+        }
+
+        // Iniciar
+        cargarTickets();
+    </script>
+</body>
+</html>

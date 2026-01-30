@@ -1,0 +1,96 @@
+// script.js
+
+// 1. EL EVENTO PRINCIPAL (Todo debe estar dentro de esto)
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- A. TU CÓDIGO ANTERIOR (Formulario de Contacto) ---
+    const form = document.getElementById('contactForm');
+    if (form) {
+        // ... aquí está toda tu lógica del contacto que ya tenías ...
+        form.addEventListener('submit', function(event) {
+            // ... validaciones ...
+            if (form.checkValidity()) {
+                enviarDatosBackend();
+            }
+        });
+    }
+
+
+    // --- B. CÓDIGO NUEVO (Lógica de Login) --- 
+    // PEGA AQUÍ EL BLOQUE QUE TE PASÉ:
+    const loginForm = document.getElementById('loginForm');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorMsg = document.getElementById('loginError');
+            const btnSubmit = loginForm.querySelector('button[type="submit"]');
+
+            // Feedback visual de carga
+            const originalText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+            btnSubmit.disabled = true;
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userEmail', email);
+                    window.location.href = 'dashboard.html'; // Redirige al dashboard
+                } else {
+                    errorMsg.textContent = data.error || 'Credenciales incorrectas';
+                    errorMsg.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error(error);
+                errorMsg.textContent = 'Error de conexión con el servidor';
+                errorMsg.classList.remove('d-none');
+            } finally {
+                btnSubmit.innerHTML = originalText;
+                btnSubmit.disabled = false;
+            }
+        });
+    }
+
+    // (Opcional) Llamada a cargar repositorios si la tienes
+    if(document.getElementById('github-container')) {
+        cargarRepositorios();
+    }
+
+    
+    const contactForm = document.getElementById('contactForm'); // Busca el ID
+    if (contactForm) { // <--- ¡ESTE IF ES LA CLAVE!
+        contactForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            // ... resto de tu lógica de contacto ...
+            if (contactForm.checkValidity()) {
+                enviarDatosBackend();
+            }
+            contactForm.classList.add('was-validated');
+        });
+    }
+
+});
+
+// --- FUNCIONES AUXILIARES (Fuera del evento principal) ---
+async function enviarDatosBackend() {
+    // ... tu función enviarDatosBackend ...
+}
+
+function mostrarAlerta(tipo, mensaje) {
+    // ... tu función mostrarAlerta ...
+}
+
+async function cargarRepositorios() {
+    // ... tu función cargarRepositorios ...
+}
