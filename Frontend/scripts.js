@@ -2,9 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     
-    // =======================================================
-    // 1. LÓGICA DEL FORMULARIO DE CONTACTO (Index.html)
-    // =======================================================
     const contactForm = document.getElementById('contactForm');
     
     if (contactForm) {
@@ -20,15 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // =======================================================
-    // 2. LÓGICA DE AUTENTICACIÓN (Login.html)
-    // =======================================================
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const formTitle = document.getElementById('formTitle');
     const authMessage = document.getElementById('authMessage');
 
-    // --- A. Alternar entre Login y Registro ---
     const showRegisterBtn = document.getElementById('showRegister');
     const showLoginBtn = document.getElementById('showLogin');
 
@@ -50,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- B. Manejo del LOGIN ---
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -60,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const btnSubmit = loginForm.querySelector('button[type="submit"]');
             const originalText = btnSubmit.innerHTML;
 
-            // Feedback visual
             btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
             btnSubmit.disabled = true;
             if(authMessage) authMessage.classList.add('d-none');
@@ -77,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (res.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('userEmail', email);
-                    window.location.href = 'dashboard.html'; // Redirige al dashboard
+                    window.location.href = 'dashboard.html'; // Redirecciona al dashboard
                 } else {
                     mostrarErrorAuth(data.error || 'Credenciales incorrectas');
                 }
@@ -91,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- C. Manejo del REGISTRO (Nuevo) ---
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -116,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await res.json();
 
                 if (res.ok) {
-                    // Éxito: Mensaje verde y volver al login
+                    // Éxito: Mensaje verde y regresa al login
                     authMessage.textContent = '¡Cuenta creada! Por favor inicia sesión.';
                     authMessage.className = 'text-center small mt-3 text-success fw-bold';
                     authMessage.classList.remove('d-none');
@@ -138,38 +128,69 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // =======================================================
-    // 3. CARGA DE REPOSITORIOS (Si aplica)
-    // =======================================================
     if(document.getElementById('github-container')) {
         cargarRepositorios();
     }
 
 });
 
-// =======================================================
-// FUNCIONES AUXILIARES (Fuera del evento principal)
-// =======================================================
 
 function mostrarErrorAuth(mensaje) {
     const authMessage = document.getElementById('authMessage');
     if (authMessage) {
         authMessage.textContent = mensaje;
-        authMessage.className = 'text-center small mt-3 text-danger fw-bold'; // Clase para error rojo
+        authMessage.className = 'text-center small mt-3 text-danger fw-bold';
         authMessage.classList.remove('d-none');
-        authMessage.classList.add('animate__animated', 'animate__shakeX'); // Animación opcional si usas Animate.css
+        authMessage.classList.add('animate__animated', 'animate__shakeX'); 
     } else {
         alert(mensaje);
     }
 }
 
 async function enviarDatosBackend() {
-    // Aquí va tu lógica original para enviar el formulario de contacto
-    console.log("Enviando formulario de contacto...");
-    // Ejemplo:
-    // const nombre = document.getElementById('nombre').value;
-    // ... fetch a tu endpoint de contacto ...
-    mostrarAlerta('success', 'Mensaje enviado correctamente (Simulación)');
+    const nombre = document.getElementById('nombre').value;
+    const email = document.getElementById('email').value;
+    const mensaje = document.getElementById('mensaje').value;
+    const btnSubmit = document.getElementById('btnSubmit');
+    const originalText = btnSubmit.innerHTML;
+
+    // 1. Feedback visual (Cargando...)
+    btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+    btnSubmit.disabled = true;
+
+    try {
+        // 2. Petición a Formspree (REEMPLAZA LA URL ABAJO)
+        const response = await fetch("https://formspree.io/f/TU_CODIGO_AQUI", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                name: nombre,
+                _replyto: email, // Esto permite que al dar "Responder" en tu Gmail, le responda al usuario
+                message: mensaje
+            })
+        });
+
+        if (response.ok) {
+            // 3. Éxito
+            mostrarAlerta('success', '¡Mensaje enviado! Te contactaré pronto.');
+            document.getElementById('contactForm').reset(); // Limpiar formulario
+            document.getElementById('contactForm').classList.remove('was-validated');
+        } else {
+            // 4. Error del servicio
+            mostrarAlerta('danger', 'Hubo un problema al enviar el mensaje. Inténtalo más tarde.');
+        }
+    } catch (error) {
+        // 5. Error de red
+        console.error(error);
+        mostrarAlerta('danger', 'Error de conexión. Verifica tu internet.');
+    } finally {
+        // Restaurar botón
+        btnSubmit.innerHTML = originalText;
+        btnSubmit.disabled = false;
+    }
 }
 
 function mostrarAlerta(tipo, mensaje) {
@@ -184,6 +205,5 @@ function mostrarAlerta(tipo, mensaje) {
 }
 
 async function cargarRepositorios() {
-    // Aquí va tu lógica para cargar repos desde GitHub
     console.log("Cargando repositorios...");
 }

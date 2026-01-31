@@ -1,6 +1,5 @@
-/* 1. Definición de Variables (Maestría: Sistema de Diseño) */
 :root {
-    --primary-color: #4a90e2;        /* Azul moderno */
+    --primary-color: #274c75;        /* Azul moderno */
     --secondary-color: #2c3e50;      /* Gris oscuro azulado */
     --accent-color: #e74c3c;         /* Rojo suave para detalles */
     --custom-btn-bg: #6c5ce7;        /* Requisito: Color distinto a Bootstrap */
@@ -9,21 +8,18 @@
     --font-body: 'Open Sans', sans-serif;
 }
 
-/* 2. Estilos Globales */
-body {
+body {  
     font-family: var(--font-body);
     color: #333;
     overflow-x: hidden; /* Prevenir scroll horizontal accidental */
 }
 
-/* Requisito: Títulos de sección con fuente distinta */
 .section-title {
     font-family: var(--font-heading);
     position: relative;
     display: inline-block;
 }
 
-/* Decoración debajo de los títulos (Toque Pro) */
 .section-title::after {
     content: '';
     display: block;
@@ -34,7 +30,6 @@ body {
     border-radius: 2px;
 }
 
-/* 3. Header Hero Section */
 .hero-section {
     background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
     height: 100vh; /* Ocupa toda la pantalla */
@@ -54,7 +49,7 @@ body {
     object-fit: cover;
 }
 
-/* 4. Tarjetas de Proyecto (Requisito: Hover effects) */
+/*  Tarjetas de Proyecto (Requisito: Hover effects) */
 .project-card {
     transition: all 0.3s ease-in-out; /* Suavidad en la animación */
     border: 1px solid rgba(0,0,0,0.05); /* Borde sutil inicial */
@@ -71,7 +66,7 @@ body {
     object-fit: cover;
 }
 
-/* 5. Botón Personalizado (Requisito: Color no default) */
+/* Botón Personalizado (Requisito: Color no default) */
 .btn-custom {
     background-color: var(--custom-btn-bg);
     color: white;
@@ -89,7 +84,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* 6. Iconos de Habilidades (Animación Extra) */
+/* Iconos de Habilidades (Animación Extra) */
 .skill-icon i {
     transition: transform 0.3s;
 }

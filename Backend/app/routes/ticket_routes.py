@@ -6,7 +6,13 @@ tickets_bp = Blueprint('tickets', __name__)
 @tickets_bp.route('/crear', methods=['POST']) 
 def crear_ticket():
     data = request.json
-    nuevo_ticket = Ticket(data['titulo'], data['descripcion'], data['creado_por'])
+    
+    # CORRECCIÓN AQUÍ: Capturamos la prioridad. Si no viene, usamos 'media'.
+    prioridad = data.get('prioridad', 'media')
+    
+    # Pasamos la prioridad al constructor del Ticket (argumento 'priority')
+    nuevo_ticket = Ticket(data['titulo'], data['descripcion'], data['creado_por'], priority=prioridad)
+    
     nuevo_ticket.crear()
     return jsonify({"msg": "Ticket creado"}), 201
 

@@ -101,12 +101,14 @@
                 }
 
                 tickets.forEach(ticket => {
-                    // Lógica simple para colores de prioridad
                     let badgeColor = 'secondary';
                     const p = (ticket.priority || ticket.prioridad || '').toLowerCase();
-                    if (p === 'alta') badgeColor = 'danger';
-                    if (p === 'media') badgeColor = 'warning';
-                    if (p === 'baja') badgeColor = 'success';
+
+                    if (p === 'alta' || p === 'high') badgeColor = 'danger';
+                    if (p === 'media' || p === 'medium') badgeColor = 'warning';
+                    if (p === 'baja' || p === 'low') badgeColor = 'success';
+
+                    // ... resto del código ...
 
                     const html = `
                         <div class="list-group-item list-group-item-action">
