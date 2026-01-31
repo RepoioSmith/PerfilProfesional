@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(authMessage) authMessage.classList.add('d-none');
 
             try {
-                const res = await fetch('http://127.0.0.1:5000/api/auth/login', {
+                const res = await fetch('https://perfilprofesional-i6jz.onrender.com/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(authMessage) authMessage.classList.add('d-none');
 
             try {
-                const res = await fetch('http://127.0.0.1:5000/api/auth/register', {
+                const res = await fetch('https://perfilprofesional-i6jz.onrender.com/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nombre, email, password })
@@ -159,8 +159,7 @@ async function enviarDatosBackend() {
     btnSubmit.disabled = true;
 
     try {
-        // 2. Petición a Formspree (REEMPLAZA LA URL ABAJO)
-        const response = await fetch("https://formspree.io/f/TU_CODIGO_AQUI", {
+        const response = await fetch("https://formspree.io/f/maqjkwnb", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -168,7 +167,7 @@ async function enviarDatosBackend() {
             },
             body: JSON.stringify({
                 name: nombre,
-                _replyto: email, // Esto permite que al dar "Responder" en tu Gmail, le responda al usuario
+                _replyto: email,
                 message: mensaje
             })
         });
